@@ -150,6 +150,14 @@ ol.control.LayerSwitcher.prototype.setVisible_ = function(lyr, visible) {
             }
         });
     }
+    if (visible && lyr.get('exclusive')) {
+        // Hide all other exclusive layers regardless of grouping
+        ol.control.LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
+            if (l != lyr && l.get('exclusive')) {
+                l.setVisible(false);
+            }
+        });
+    }
 };
 
 /**
@@ -186,6 +194,9 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
         if (lyr.get('type') === 'base') {
             input.type = 'radio';
             input.name = 'base';
+        } else if (lyr.get('exclusive')) {
+            input.type = 'radio';
+            input.name = 'exclusive';
         } else {
             input.type = 'checkbox';
         }
